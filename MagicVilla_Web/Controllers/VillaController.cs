@@ -2,6 +2,7 @@
 using MagicVilla_Web.Models;
 using MagicVilla_Web.Models.Dto;
 using MagicVilla_Web.Services.IServices;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
@@ -28,5 +29,27 @@ namespace MagicVilla_Web.Controllers
             }
             return View(list);
         }
-    }
+		public async Task<IActionResult> CreateVilla()
+		{
+			return View();
+		}
+
+		[HttpPost]
+		[ValidateAntiForgeryToken]
+		public async Task<IActionResult> CreateVilla(VillaCreateDTO model)
+		{
+			if (ModelState.IsValid)
+			{
+
+				var response = await _villaService.CreateAsync<APIResponse>(model);
+				if (response != null && response.IsSuccess)
+				{
+					TempData["success"] = "Villa created successfully";
+					return RedirectToAction(nameof(IndexVilla));
+				}
+			}
+			TempData["error"] = "Error encountered.";
+			return View(model);
+		}
+	}
 }
