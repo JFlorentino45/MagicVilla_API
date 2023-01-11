@@ -34,7 +34,7 @@ namespace MagicVilla_VillaAPI.Controllers.v1
         [ResponseCache(CacheProfileName = "Default30")]
 
         public async Task<ActionResult<APIResponse>> GetVillas([FromQuery(Name = "filterOccupancy")] int? occupancy,
-            [FromQuery] string? search, int pageSize = 2, int pageNumber = 1)
+            [FromQuery] string? search, int pageSize = 0, int pageNumber = 1)
         {
             try
             {
@@ -81,6 +81,7 @@ namespace MagicVilla_VillaAPI.Controllers.v1
                 var villa = await _dbVilla.GetAsync(u => u.Id == id);
                 if (villa == null)
                 {
+                    _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound();
                 }
                 _response.Result = _mapper.Map<VillaDTO>(villa);
